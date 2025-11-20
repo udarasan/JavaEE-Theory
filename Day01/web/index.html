@@ -1,0 +1,70 @@
+<html>
+<head>
+    <title>Sample HTML Page</title>
+</head>
+<body>
+    <h1>Welcome to the Sample HTML Page</h1>
+    <p>This is a simple HTML document.</p>
+    <div id="content" >
+        
+    </div>
+
+    <button id="btn-ajax-get">GET</button>
+    <button id="btn-ajax-post">POST</button>
+    <button id="btn-ajax-put">PUT</button>
+    <button id="btn-ajax-delete">DELETE</button>
+
+    <script src="jquery-3.7.1.min.js"></script>
+
+    <script>
+        $('#btn-ajax-get').click(function(){
+            $.ajax({
+                url:'http://localhost:8080/Day01_war_exploded/hello',
+                method:'GET',
+                success:function(response){
+                    console.log(response);
+                },
+                error:function(){
+                    console.log('Error occurred while fetching data.');
+                }
+            })
+        });
+        $('#btn-ajax-post').click(function(){
+            $.ajax({
+                url:'http://localhost:8080/Day01_war_exploded/hello',
+                method:'POST',
+                success:function(response){
+                    console.log(response);
+                },
+                error:function(){
+                    console.log('Error occurred while fetching data.');
+                }
+            })
+        });
+        $('#btn-ajax-put').click(function(){
+            $.ajax({
+                url:'http://localhost:8080/Day01_war_exploded/hello',
+                method:'PUT',
+                success:function(response){
+                    console.log(response);
+                },
+                error:function(){
+                    console.log('Error occurred while fetching data.');
+                }
+            })
+        });
+        $('#btn-ajax-delete').click(function(){
+            $.ajax({
+                url:'http://localhost:8080/Day01_war_exploded/hello',
+                method:'DELETE',
+                success:function(response){
+                    console.log(response);
+                },
+                error:function(){
+                    console.log('Error occurred while fetching data.');
+                }
+            })
+        });
+    </script>
+</body>
+</html>

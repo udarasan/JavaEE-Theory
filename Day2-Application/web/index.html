@@ -1,0 +1,36 @@
+<html>
+<head>
+    <title>Sample HTML Page</title>
+</head>
+<body>
+<h1>Welcome to the Sample HTML Page</h1>
+<p>This is a simple HTML document.</p>
+<div>
+    <input type="text" id="cid" placeholder="Enter your Id">
+    <input type="text" id="cname" placeholder="Enter your Name">
+    <input type="text" id="caddress" placeholder="Enter your Id">
+    <button id="save-customer">Save</button>
+</div>
+<script src="jquery-3.7.1.min.js"></script>
+
+<script>
+
+    var cid=$('#cid').val();
+    var cname=$('#cname').val();
+    var caddress=$('#caddress').val();
+
+    $('#save-customer').click(function(){
+        $.ajax({
+            url:"http://localhost:8080/Day2_Application_Web_exploded/customer?id="+cid+"&name"+cname+"&address="+caddress,
+            method:'POST',
+            success:function(response){
+                console.log(response);
+            },
+            error:function(){
+                console.log('Error occurred while fetching data.');
+            }
+        })
+    });
+</script>
+</body>
+</html>
