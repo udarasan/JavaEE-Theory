@@ -16,6 +16,7 @@ public class CustomerServlet extends HttpServlet {
         String id=req.getParameter("id");
         String name=req.getParameter("name");
         String address=req.getParameter("address");
+        System.out.println(id+name+address);
         List<Customer> customerList=new ArrayList<Customer>();
         customerList.add(new Customer(id,name,address));
     }
