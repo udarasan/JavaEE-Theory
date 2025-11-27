@@ -123,15 +123,14 @@ public class CustomerServlet extends HttpServlet {
             preparedStatement.setString(1,id);
             int rowInserted=preparedStatement.executeUpdate();
             if(rowInserted>0){
-                resp.getWriter().println("Customer Delete Successfully");
+                resp.getWriter().println("Customer Saved Successfully");
             }else {
-                resp.getWriter().println("Customer Delete Failed");
+                resp.getWriter().println("Customer Saved Failed");
             }
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
     }
 }
