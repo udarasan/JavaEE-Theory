@@ -1,53 +1,103 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>Sample HTML Page</title>
+    <meta charset="UTF-8">
+    <title>Customer CRUD Panel</title>
 </head>
 <body>
-<h1>Welcome to the Sample HTML Page</h1>
-<p>This is a simple HTML document.</p>
+
+<h1>Customer CRUD Operations</h1>
+
+<!-- CREATE / UPDATE FORM -->
 <div>
-    <input type="text" id="cid" placeholder="Enter your Id">
-    <input type="text" id="cname" placeholder="Enter your Name">
-    <input type="text" id="caddress" placeholder="Enter your Address">
-    <button id="save-customer">Save</button>
+    <input type="text" id="id" placeholder="Id" />
+    <input type="text" id="name" placeholder="Name" />
+    <input type="text" id="address" placeholder="Address" />
 </div>
-<button id="get-all-customers">GetAll</button>
-<div id="content" >
 
-</div>
+<br>
+
+<button id="btnCreate">Create</button>
+<button id="btnGet">Get Customer</button>
+<button id="btnGetAll">Get All</button>
+<button id="btnUpdate">Update</button>
+<button id="btnDelete">Delete</button>
+
+<hr>
+
+<h2>Output</h2>
+<pre id="output"></pre>
+
 <script src="jquery-3.7.1.min.js"></script>
-
 <script>
-$('#save-customer').click(function(){
 
-        var cid=$('#cid').val();
-        var cname=$('#cname').val();
-        var caddress=$('#caddress').val();
+    const baseUrl = "http://localhost:8080/Day2_Application_Web_exploded/customer";
+
+    // CREATE
+    $("#btnCreate").click(function () {
+        $.ajax({
+            url: baseUrl,
+            method: "POST",
+            data: {
+                id: $("#id").val(),
+                name: $("#name").val(),
+                address: $("#address").val()
+            },
+            success: function (res) {
+                $("#output").text(res);
+            }
+        });
+    });
+
+    // GET ONE
+    $("#btnGet").click(function () {
+        $.ajax({
+            url: baseUrl + "?id=" + $("#id").val(),
+            method: "GET",
+            success: function (res) {
+                $("#output").text(res);
+            }
+        });
+    });
+
+    // GET ALL
+    $("#btnGetAll").click(function () {
+        $.ajax({
+            url: baseUrl,
+            method: "GET",
+            success: function (res) {
+                $("#output").text(res);
+            }
+        });
+    });
+
+    // UPDATE
+    $("#btnUpdate").click(function () {
+        let id = $("#id").val();
+        let name = $("#name").val();
+        let address = $("#address").val();
 
         $.ajax({
-            url:"http://localhost:8080/Day2_Application_Web_exploded/customer?id="+cid+"&name="+cname+"&address="+caddress,
-            method:'POST',
-            success:function(response){
-                console.log(response);
-            },
-            error:function(){
-                console.log('Error occurred while fetching data.');
+            url: baseUrl + "?id=" + id + "&name=" + name + "&address=" + address,
+            method: "PUT",
+            success: function (res) {
+                $("#output").text(res);
             }
-        })
+        });
     });
-$('#get-all-customers').click(function(){
-    $.ajax({
-        url:"http://localhost:8080/Day2_Application_Web_exploded/customer",
-        method:'GET',
-        success:function(response){
-            console.log(response);
-            $('#content').append(response)
-        },
-        error:function(){
-            console.log('Error occurred while fetching data.');
-        }
-    })
-});
+
+    // DELETE
+    $("#btnDelete").click(function () {
+        $.ajax({
+            url: baseUrl + "?id=" + $("#id").val(),
+            method: "DELETE",
+            success: function (res) {
+                $("#output").text(res);
+            }
+        });
+    });
+
 </script>
+
 </body>
 </html>
