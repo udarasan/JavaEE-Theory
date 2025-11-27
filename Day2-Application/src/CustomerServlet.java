@@ -5,8 +5,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+
 
 @WebServlet(urlPatterns = "/customer")
 public class CustomerServlet extends HttpServlet {
@@ -20,10 +22,26 @@ public class CustomerServlet extends HttpServlet {
         String name = req.getParameter("name");
         String address = req.getParameter("address");
 
-        Customer customer = new Customer(id, name, address);
-        customers.add(customer);
-
-        resp.getWriter().println("Customer added successfully");
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection connection=DriverManager.getConnection("jdbc:mysql://localhost:3306/javaeeapp2",
+                    "root","12345678");
+            String query="INSERT INTO customer (id,name,address) VALUES (?,?,?)";
+            PreparedStatement preparedStatement=connection.prepareStatement(query);
+            preparedStatement.setString(1,id);
+            preparedStatement.setString(2,name);
+            preparedStatement.setString(3,address);
+            int rowInserted=preparedStatement.executeUpdate();
+            if(rowInserted>0){
+                resp.getWriter().println("Customer Saved Successfully");
+            }else {
+                resp.getWriter().println("Customer Saved Failed");
+            }
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     // READ (Get All or Get by ID)
@@ -31,20 +49,36 @@ public class CustomerServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String id = req.getParameter("id");
 
-        if (id == null) {
-            // Get All
-            for (Customer c : customers) {
-                resp.getWriter().println(c.getId() + " - " + c.getName() + " - " + c.getAddress());
-            }
-        } else {
-            // Get by ID
-            for (Customer c : customers) {
-                if (c.getId().equals(id)) {
-                    resp.getWriter().println(c.getId() + " - " + c.getName() + " - " + c.getAddress());
-                    return;
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection connection=DriverManager.getConnection("jdbc:mysql://localhost:3306/javaeeapp2",
+                    "root","12345678");
+            if (id==null) {
+                String query="SELECT * FROM customer";
+                PreparedStatement preparedStatement=connection.prepareStatement(query);
+                ResultSet resultSet=preparedStatement.executeQuery();
+                while (resultSet.next()) {
+                    String cId=resultSet.getString("id");
+                    String cName=resultSet.getString("name");
+                    String cAddress=resultSet.getString("address");
+                    resp.getWriter().println(cId+","+cName+","+cAddress);
+                }
+            }else  {
+                String query="SELECT * FROM customer WHERE id=?";
+                PreparedStatement preparedStatement=connection.prepareStatement(query);
+                preparedStatement.setString(1,id);
+                ResultSet resultSet=preparedStatement.executeQuery();
+                while (resultSet.next()) {
+                    String cId=resultSet.getString("id");
+                    String cName=resultSet.getString("name");
+                    String cAddress=resultSet.getString("address");
+                    resp.getWriter().println(cId+","+cName+","+cAddress);
                 }
             }
-            resp.getWriter().println("Customer not found");
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 
