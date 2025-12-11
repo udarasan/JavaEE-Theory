@@ -1,19 +1,29 @@
+package org.example;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.commons.dbcp2.BasicDataSource;
 
 import java.io.IOException;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
+@WebServlet(urlPatterns = "/dbcp")
+public class DBCPServlet extends HttpServlet {
+    BasicDataSource ds;
+    @Override
+    public void init() throws ServletException {
+        ds=new BasicDataSource();
+        ds.setDriverClassName("com.mysql.jdbc.Driver");
+        ds.setUrl("jdbc:mysql://localhost:3306/javaeeapp2");
+        ds.setUsername("root");
+        ds.setPassword("12345678");
+        ds.setInitialSize(50);
+        ds.setMaxTotal(100);
+    }
 
-@WebServlet(urlPatterns = "/customer")
-public class CustomerServlet extends HttpServlet {
-
-    // CREATE
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String id = req.getParameter("id");
@@ -21,9 +31,9 @@ public class CustomerServlet extends HttpServlet {
         String address = req.getParameter("address");
 
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection connection=DriverManager.getConnection("jdbc:mysql://localhost:3306/javaeeapp2",
-                    "root","12345678");
+            //Class.forName("com.mysql.cj.jdbc.Driver");
+            //Connection connection= DriverManager.getConnection("jdbc:mysql://localhost:3306/javaeeapp2","root","12345678");
+            Connection connection=ds.getConnection();
             String query="INSERT INTO customer (id,name,address) VALUES (?,?,?)";
             PreparedStatement preparedStatement=connection.prepareStatement(query);
             preparedStatement.setString(1,id);
@@ -35,8 +45,6 @@ public class CustomerServlet extends HttpServlet {
             }else {
                 resp.getWriter().println("Customer Saved Failed");
             }
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -48,9 +56,7 @@ public class CustomerServlet extends HttpServlet {
         String id = req.getParameter("id");
 
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection connection=DriverManager.getConnection("jdbc:mysql://localhost:3306/javaeeapp2",
-                    "root","12345678");
+            Connection connection=ds.getConnection();
             if (id==null) {
                 String query="SELECT * FROM customer";
                 PreparedStatement preparedStatement=connection.prepareStatement(query);
@@ -73,8 +79,6 @@ public class CustomerServlet extends HttpServlet {
                     resp.getWriter().println(cId+","+cName+","+cAddress);
                 }
             }
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -87,9 +91,7 @@ public class CustomerServlet extends HttpServlet {
         String name = req.getParameter("name");
         String address = req.getParameter("address");
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection connection=DriverManager.getConnection("jdbc:mysql://localhost:3306/javaeeapp2",
-                    "root","12345678");
+            Connection connection=ds.getConnection();
             String query="UPDATE customer SET name=?,address=? WHERE id=?";
             PreparedStatement preparedStatement=connection.prepareStatement(query);
             preparedStatement.setString(1,name);
@@ -101,8 +103,6 @@ public class CustomerServlet extends HttpServlet {
             }else {
                 resp.getWriter().println("Customer Updated Failed");
             }
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -113,9 +113,7 @@ public class CustomerServlet extends HttpServlet {
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String id = req.getParameter("id");
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection connection=DriverManager.getConnection("jdbc:mysql://localhost:3306/javaeeapp2",
-                    "root","12345678");
+            Connection connection=ds.getConnection();
             String query="delete from customer WHERE id=?";
             PreparedStatement preparedStatement=connection.prepareStatement(query);
             preparedStatement.setString(1,id);
@@ -125,8 +123,6 @@ public class CustomerServlet extends HttpServlet {
             }else {
                 resp.getWriter().println("Customer Saved Failed");
             }
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
