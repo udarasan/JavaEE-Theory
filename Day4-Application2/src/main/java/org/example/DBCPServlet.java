@@ -1,5 +1,6 @@
 package org.example;
 
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -15,13 +16,8 @@ public class DBCPServlet extends HttpServlet {
     BasicDataSource ds;
     @Override
     public void init() throws ServletException {
-        ds=new BasicDataSource();
-        ds.setDriverClassName("com.mysql.jdbc.Driver");
-        ds.setUrl("jdbc:mysql://localhost:3306/javaeeapp2");
-        ds.setUsername("root");
-        ds.setPassword("12345678");
-        ds.setInitialSize(50);
-        ds.setMaxTotal(100);
+        ServletContext sc = getServletContext();
+        ds = (BasicDataSource)sc.getAttribute("datasource");
     }
 
     @Override
