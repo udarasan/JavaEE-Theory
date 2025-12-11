@@ -15,6 +15,7 @@ import java.sql.*;
 public class DBCPServlet extends HttpServlet {
     BasicDataSource ds;
     @Override
+
     public void init() throws ServletException {
         ServletContext sc = getServletContext();
         ds = (BasicDataSource)sc.getAttribute("datasource");
