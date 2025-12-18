@@ -20,8 +20,25 @@
     <button onclick="updateCustomer()">Update</button>
     <button onclick="deleteCustomer()">Delete</button>
 </div>
+<div>
+    <table id="customer-table">
+        <thead>
+        <tr>
+            <th>Customer Id</th>
+            <th>Customer Name</th>
+            <th>Customer Address</th>
+        </tr>
+        </thead>
+        <tbody id="customer-list">
+
+        </tbody>
+    </table>
+</div>
 <script src="../assests/js/jquery-3.7.1.min.js"></script>
 <script>
+    window.onload(
+        getAllCustomer()
+    )
     function saveCustomer() {
         const cid=$('#customer-id').val()
         const cname=$('#customer-name').val()
@@ -37,6 +54,7 @@
            }),
            success:function (response) {
                console.log(response)
+               getAllCustomer();
            },
            error:function (error) {
                console.log(error)
@@ -58,6 +76,7 @@
             }),
             success:function (response) {
                 console.log(response)
+                getAllCustomer();
             },
             error:function (error) {
                 console.log(error)
@@ -71,13 +90,30 @@
             method:'DELETE',
             success:function (response) {
                 console.log(response)
+                getAllCustomer();
             },
             error:function (error) {
                 console.log(error)
             }
         })
     }
-    function getAllCustomer() {}
+    function getAllCustomer() {
+        $.ajax({
+            url:'http://localhost:8080/Day5_POS_Backend_Web_exploded/api/v1/customer',
+            method:'GET',
+            success:function (response) {
+                $('#customer-list').empty()
+                for(let customer of response){
+                    const row ="<tr><td>"+customer.cid+"</td><td>"+customer.cname+"</td><td>"+customer.caddress+"</td></tr>"
+                    $('#customer-list').append(row)
+                }
+
+            },
+            error:function (error) {
+                console.log(error)
+            }
+        })
+    }
 </script>
 </body>
 </html>
