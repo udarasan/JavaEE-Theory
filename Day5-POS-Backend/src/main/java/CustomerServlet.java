@@ -1,3 +1,5 @@
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -10,7 +12,14 @@ import java.io.IOException;
 public class CustomerServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        System.out.println("do post method invoked");
+        Gson gson = new Gson();
+        JsonObject jsonObject = gson.fromJson(req.getReader(), JsonObject.class);
+        String id = jsonObject.get("cid").getAsString();
+        String name = jsonObject.get("cname").getAsString();
+        String address = jsonObject.get("caddress").getAsString();
+        System.out.println(id+name+address);
+
+
     }
 
     @Override
