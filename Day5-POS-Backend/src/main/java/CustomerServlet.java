@@ -52,7 +52,28 @@ public class CustomerServlet extends HttpServlet {
 
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        System.out.println("do put method invoked");
+        Gson gson = new Gson();
+        JsonObject jsonObject = gson.fromJson(req.getReader(), JsonObject.class);
+        String id = jsonObject.get("cid").getAsString();
+        String name = jsonObject.get("cname").getAsString();
+        String address = jsonObject.get("caddress").getAsString();
+
+        try {
+            Connection connection=ds.getConnection();
+            String query="UPDATE customer SET name=?,address=? WHERE id=?";
+            PreparedStatement preparedStatement=connection.prepareStatement(query);
+            preparedStatement.setString(1,name);
+            preparedStatement.setString(2,address);
+            preparedStatement.setString(3,id);
+            int rowInserted=preparedStatement.executeUpdate();
+            if(rowInserted>0){
+                resp.getWriter().println("Customer Updated Successfully");
+            }else {
+                resp.getWriter().println("Customer Updated Failed");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -61,7 +82,21 @@ public class CustomerServlet extends HttpServlet {
     }
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        System.out.println("do delete method invoked");
+        String id = req.getParameter("cid");
+        try {
+            Connection connection=ds.getConnection();
+            String query="delete from customer WHERE id=?";
+            PreparedStatement preparedStatement=connection.prepareStatement(query);
+            preparedStatement.setString(1,id);
+            int rowInserted=preparedStatement.executeUpdate();
+            if(rowInserted>0){
+                resp.getWriter().println("Customer Deleted Successfully");
+            }else {
+                resp.getWriter().println("Customer Deleted Failed");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
     //what is cors ?
     //cors origin resource sharing is a mechanism that allows a server to tell browser
