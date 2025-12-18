@@ -1,4 +1,5 @@
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
@@ -11,6 +12,7 @@ import org.apache.commons.dbcp2.BasicDataSource;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 @WebServlet(urlPatterns = "/api/v1/customer")
@@ -78,7 +80,27 @@ public class CustomerServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        System.out.println("do get method invoked");
+        try {
+            Connection connection= ds.getConnection();
+            String query="SELECT * FROM customer";
+            PreparedStatement preparedStatement=connection.prepareStatement(query);
+            ResultSet resultSet=preparedStatement.executeQuery();
+            JsonArray customerList=new JsonArray();
+            while (resultSet.next()) {
+                String cId=resultSet.getString("id");
+                String cName=resultSet.getString("name");
+                String cAddress=resultSet.getString("address");
+                JsonObject jsonObject=new JsonObject();
+                jsonObject.addProperty("cid",cId);
+                jsonObject.addProperty("cname",cName);
+                jsonObject.addProperty("caddress",cAddress);
+                customerList.add(jsonObject);
+            }
+            resp.getWriter().println(customerList);
+            resp.setContentType("application/json");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
